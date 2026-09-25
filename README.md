@@ -38,6 +38,13 @@ Se descartaron del modelo las columnas `Z_CostContact` y `Z_Revenue` del dataset
 original: tienen el mismo valor en las 2.240 filas, por lo que no aportan ninguna
 capacidad analítica.
 
+### Diagrama entidad-relación
+
+![Diagrama entidad-relación](capturas/DER_marketing.png)
+
+*(Generado con la herramienta ERD Tool de pgAdmin 4 sobre este esquema — ver pasos de
+generación en la sección de ejecución.)*
+
 ## Archivos del repositorio
 
 | Archivo | Contenido |
@@ -74,6 +81,39 @@ correctamente antes de correr cualquier consulta de negocio (0 nulos, rangos de 
 ingreso razonables, categorías válidas, y que la normalización en las 3 tablas de
 detalle sea consistente para los 2.236 clientes).
 
+### Evidencia de la carga y la limpieza
+
+**Control de carga** (estructura.sql): confirma las 2.236 filas de `clientes` y las
+13.416 / 8.944 / 13.416 filas de las tablas normalizadas.
+
+![Control de carga](capturas/captura_control_carga.png)
+
+**1.1 — Nulos en columnas críticas**: 0 en las 3 columnas verificadas.
+
+![Verificación de nulos](capturas/captura_1_1_nulos.png)
+
+**1.2 — Rango de año de nacimiento**: entre 1940 y 1996, sin los 3 registros imposibles.
+
+![Rango de nacimiento](capturas/captura_1_2_rango_nacimiento.png)
+
+**1.3 — Rango de ingreso anual**: máximo 162.397, sin el outlier de 666.666.
+
+![Rango de ingreso](capturas/captura_1_3_rango_ingreso.png)
+
+**1.4 — Categorías válidas de estado civil**: solo las 6 categorías esperadas,
+incluyendo `Otro` con los 7 casos unificados.
+
+![Estado civil](capturas/captura_1_4_estado_civil.png)
+
+**1.5 — Verificación de tipos de datos**: `date` y `numeric`, no texto.
+
+![Tipos de datos](capturas/captura_1_5_tipos_datos.png)
+
+**1.6 — Integridad de la normalización**: 0 filas devueltas (ningún cliente quedó mal
+cargado en las tablas de detalle).
+
+![Integridad de la normalización](capturas/captura_1_6_integridad.png)
+
 ## Hallazgos principales
 
 ### 1. Vinos es, por lejos, la categoría más importante
@@ -91,6 +131,8 @@ Vinos genera casi el doble que Carnes, y casi 12 veces lo que genera Frutas. **L
 facturación de la empresa depende fuertemente de una sola categoría** — una caída en
 Vinos golpearía el negocio mucho más que una caída en cualquier otra categoría.
 
+![Pregunta 1 - ingresos por categoría](capturas/captura_pregunta1.png)
+
 ### 2. La última campaña fue, de lejos, la más efectiva — y la Campaña 2 fue un fracaso
 
 | Campaña | Tasa de aceptación |
@@ -107,6 +149,8 @@ revisar qué se hizo distinto ahí (oferta, canal de contacto, segmentación) pa
 repetirlo. La Campaña 2, en cambio, prácticamente no tuvo efecto — no parece razonable
 seguir invirtiendo en ese formato sin rediseñarlo primero.
 
+![Pregunta 2 - tasa de aceptación por campaña](capturas/captura_pregunta2.png)
+
 ### 3. Quien acepta campañas gasta el doble — pero probablemente no es por la campaña
 
 | Segmento | Clientes | Gasto promedio |
@@ -121,6 +165,8 @@ atención a las campañas y las aceptan — no que la campaña los haya converti
 grandes compradores. Confirmarlo requeriría comparar el gasto de cada cliente *antes* y
 *después* de cada campaña, dato que este dataset no tiene. Tratar esta correlación como
 causalidad llevaría a sobreestimar el retorno real de las campañas.
+
+![Pregunta 3 - gasto según aceptación de campañas](capturas/captura_pregunta3.png)
 
 ### 4. Los clientes top no son necesariamente los de mayor ingreso declarado
 
@@ -139,6 +185,8 @@ clientes de altísimo ingreso que gastan poco. Esto sugiere que la fidelización
 apuntar a ese perfil (ingreso alto pero no extremo, con gasto sostenido), en vez de
 asumir que "más ingreso = más valioso".
 
+![Pregunta 4 - top 5 clientes por gasto total](capturas/captura_pregunta4.png)
+
 ### 5. Catálogo es el canal más débil en los 3 segmentos de ingreso — pero con potencial
 
 | Segmento de ingreso | Tienda | Web | Catálogo | Con descuento |
@@ -156,6 +204,8 @@ un costo de producción/envío que no se está aprovechando en la base completa.
 discontinuarlo, tiene sentido invertir en relanzarlo dirigido específicamente al
 segmento de ingreso medio y alto (donde ya muestra tracción), en lugar de mandarlo a
 toda la base por igual.
+
+![Pregunta 5 - canal por nivel de ingreso](capturas/captura_pregunta5.png)
 
 ## Cómo ejecutar el proyecto
 
